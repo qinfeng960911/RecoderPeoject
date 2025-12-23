@@ -35,7 +35,6 @@ import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.StringSignature;
 import com.feng.socketdemo.R;
 import com.feng.socketdemo.utils.FileUtil;
 import com.feng.socketdemo.utils.SPUtil;
@@ -151,7 +150,8 @@ public class PlayFragment extends Fragment implements TextureView.SurfaceTexture
         cover = (ImageView) view.findViewById(R.id.surface_cover);
 
         if (!TextUtils.isEmpty(mUrl)) {
-            Glide.with(requireContext()).load(FileUtil.getSnapFile(mUrl)).signature(new StringSignature(UUID.randomUUID().toString())).fitCenter().into(cover);
+//            .signature(new StringSignature(UUID.randomUUID().toString()))
+            Glide.with(requireContext()).load(FileUtil.getSnapFile(mUrl)).fitCenter().into(cover);
         }
 
         return view;
@@ -208,9 +208,11 @@ public class PlayFragment extends Fragment implements TextureView.SurfaceTexture
                         ((PlayActivity) activity).onEvent(PlayFragment.this, state, errorCode, msg);
                     }
                 } else if (resultCode == EasyPlayerClient.RESULT_RECORD_BEGIN) {
-                    if (activity instanceof PlayActivity) ((PlayActivity) activity).onRecordState(1);
+                    if (activity instanceof PlayActivity)
+                        ((PlayActivity) activity).onRecordState(1);
                 } else if (resultCode == EasyPlayerClient.RESULT_RECORD_END) {
-                    if (activity instanceof PlayActivity) ((PlayActivity) activity).onRecordState(-1);
+                    if (activity instanceof PlayActivity)
+                        ((PlayActivity) activity).onRecordState(-1);
                 }
             }
         };
@@ -270,7 +272,7 @@ public class PlayFragment extends Fragment implements TextureView.SurfaceTexture
     @Override
     public void onDestroyView() {
         ViewGroup parent = (ViewGroup) getView().getParent();
-        if (parent != null){
+        if (parent != null) {
             parent.removeOnLayoutChangeListener(listener);
         }
         super.onDestroyView();
@@ -656,8 +658,6 @@ public class PlayFragment extends Fragment implements TextureView.SurfaceTexture
     }
 
 
-
-
     @Override
     public void onSEIData(byte[] sei) {
 //        String seiStr = bytesToHex(sei);
@@ -703,7 +703,8 @@ public class PlayFragment extends Fragment implements TextureView.SurfaceTexture
         this.mUrl = url;
 
         if (!TextUtils.isEmpty(mUrl)) {
-            Glide.with(requireContext()).load(FileUtil.getSnapFile(mUrl)).signature(new StringSignature(UUID.randomUUID().toString())).fitCenter().into(cover);
+            //.signature(new StringSignature(UUID.randomUUID().toString()))
+            Glide.with(requireContext()).load(FileUtil.getSnapFile(mUrl)).fitCenter().into(cover);
         }
     }
 

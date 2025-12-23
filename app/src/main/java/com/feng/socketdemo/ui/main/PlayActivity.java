@@ -27,12 +27,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 
 import com.feng.socketdemo.R;
+import com.feng.socketdemo.base.BaseBindingActivity;
 import com.feng.socketdemo.data.VideoSource;
 import com.feng.socketdemo.databinding.ActivityPlayBinding;
 import com.feng.socketdemo.utils.FileUtil;
@@ -43,7 +42,7 @@ import java.util.Date;
 /**
  * 播放页
  */
-public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDoubleTapListener, PlayFragment.SEIDataListener {
+public class PlayActivity extends BaseBindingActivity<ActivityPlayBinding, PlayModel> implements PlayFragment.OnDoubleTapListener, PlayFragment.SEIDataListener {
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0x111;
 
@@ -57,8 +56,6 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
 //    private int mActionStopSound;
     private float mAudioVolumn;
 //    private float mMaxVolume;
-
-    private ActivityPlayBinding mBinding;
 
     private long mLastReceivedLength;
 
@@ -77,7 +74,7 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
                 mLastReceivedLength = 0;
             }
 
-            mBinding.streamBps.setText((length - mLastReceivedLength) / 1024 + "Kbps");
+            binding.streamBps.setText((length - mLastReceivedLength) / 1024 + "Kbps");
             mLastReceivedLength = length;
 
             mHandler.postDelayed(this, 1000);
@@ -87,11 +84,32 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
     private Runnable mResetRecordStateRunnable = new Runnable() {
         @Override
         public void run() {
-            ImageView mPlayAudio = mBinding.liveVideoBarRecord;
+            ImageView mPlayAudio = binding.liveVideoBarRecord;
             mPlayAudio.setImageState(new int[]{}, true);
             mPlayAudio.removeCallbacks(mResetRecordStateRunnable);
         }
     };
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_play;
+    }
+
+
+    @Override
+    protected void initView() {
+
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void initObserver() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,31 +170,20 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
             mRenderFragment.setSEIDataListener(this);
         }
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_play);
 
         initSoundPool();
 
-        mBinding.playerLl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSingleTab(null);
-            }
-        });
+        binding.playerLl.setOnClickListener(v -> onSingleTab(null));
 
-        mBinding.toolbarTitle.setText(url);
-        mBinding.toolbarBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        binding.toolbarTitle.setText(url);
+        binding.toolbarBack.setOnClickListener(v -> finish());
 
-        mBinding.liveVideoBarEnableAudio.setEnabled(false);
-        mBinding.liveVideoBarTakePicture.setEnabled(false);
-        mBinding.liveVideoBarRecord.setEnabled(false);
+        binding.liveVideoBarEnableAudio.setEnabled(false);
+        binding.liveVideoBarTakePicture.setEnabled(false);
+        binding.liveVideoBarRecord.setEnabled(false);
 
         // 实现TextView的滑动
-        mBinding.msgTxt.setMovementMethod(new ScrollingMovementMethod());
+        binding.msgTxt.setMovementMethod(new ScrollingMovementMethod());
 
         if (isLandscape()) {
             landscape();
@@ -184,6 +191,7 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
             vertical();
         }
     }
+
 
     @Override
     protected void onDestroy() {
@@ -202,9 +210,9 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
                     // permission was granted, yay! Do the contacts-related task you need to do.
 
                     if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
-                        onTakePicture(mBinding.liveVideoBarTakePicture);
+                        onTakePicture(binding.liveVideoBarTakePicture);
                     } else {
-                        onRecordOrStop(mBinding.liveVideoBarRecord);
+                        onRecordOrStop(binding.liveVideoBarRecord);
                     }
                 } else {
                     // permission denied, boo! Disable the functionality that depends on this permission.
@@ -255,10 +263,10 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
 
     @Override
     public void onSingleTab(PlayFragment f) {
-        if (mBinding.liveVideoBar.getVisibility() == View.GONE) {
-            mBinding.liveVideoBar.setVisibility(View.VISIBLE);
+        if (binding.liveVideoBar.getVisibility() == View.GONE) {
+            binding.liveVideoBar.setVisibility(View.VISIBLE);
         } else {
-            mBinding.liveVideoBar.setVisibility(View.GONE);
+            binding.liveVideoBar.setVisibility(View.GONE);
         }
     }
 
@@ -297,27 +305,27 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
 
     // 横屏
     private void landscape() {
-        mBinding.enterFullscreen.setSelected(true);
+        binding.enterFullscreen.setSelected(true);
 
-        LinearLayout container = mBinding.playerContainer;
+        LinearLayout container = binding.playerContainer;
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setNavVisibility(false);
 
         // 横屏情况下,播放窗口横着排开
         container.setOrientation(LinearLayout.HORIZONTAL);
-        mBinding.renderFl.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        mBinding.renderFl.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-        mBinding.renderHolder.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        mBinding.renderHolder.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderFl.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderFl.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderHolder.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderHolder.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
         mRenderFragment.enterFullscreen();
     }
 
     // 竖屏
     private void vertical() {
-        mBinding.enterFullscreen.setSelected(false);
+        binding.enterFullscreen.setSelected(false);
 
-        LinearLayout container = mBinding.playerContainer;
+        LinearLayout container = binding.playerContainer;
 
         // 竖屏,取消全屏状态
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -325,18 +333,18 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
 
         // 竖屏情况下,播放窗口竖着排开
         container.setOrientation(LinearLayout.VERTICAL);
-        mBinding.renderFl.getLayoutParams().height = getResources().getDimensionPixelSize(R.dimen.render_wnd_height);
-        mBinding.renderFl.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-        mBinding.renderHolder.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        mBinding.renderHolder.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderFl.getLayoutParams().height = getResources().getDimensionPixelSize(R.dimen.render_wnd_height);
+        binding.renderFl.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderHolder.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        binding.renderHolder.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
         mRenderFragment.quiteFullscreen();
     }
 
     public void setNavVisibility(boolean visible) {
         if (visible) {
-            mBinding.toolbar.setVisibility(View.VISIBLE);
+            binding.toolbar.setVisibility(View.VISIBLE);
         } else {
-            mBinding.toolbar.setVisibility(View.GONE);
+            binding.toolbar.setVisibility(View.GONE);
         }
 
 //        if (!ViewConfiguration.get(this).hasPermanentMenuKey()) {
@@ -387,23 +395,23 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
     /* ====================== 播放控制 ====================== */
 
     private void onVideoDisplayed() {
-        mBinding.liveVideoBarTakePicture.setEnabled(true);
-        mBinding.liveVideoBarRecord.setEnabled(true);
-        mBinding.msgTxt.append(String.format("[%s]\t%s\n", new SimpleDateFormat("HH:mm:ss").format(new Date()), "播放中"));
+        binding.liveVideoBarTakePicture.setEnabled(true);
+        binding.liveVideoBarRecord.setEnabled(true);
+        binding.msgTxt.append(String.format("[%s]\t%s\n", new SimpleDateFormat("HH:mm:ss").format(new Date()), "播放中"));
     }
 
     private void onPlayStart() {
         boolean enable = mRenderFragment.isAudioEnable();
-        mBinding.liveVideoBarEnableAudio.setImageState(enable ? new int[]{android.R.attr.state_pressed} : new int[]{}, true);
-        mBinding.liveVideoBarEnableAudio.setEnabled(true);
+        binding.liveVideoBarEnableAudio.setImageState(enable ? new int[]{android.R.attr.state_pressed} : new int[]{}, true);
+        binding.liveVideoBarEnableAudio.setEnabled(true);
         mHandler.postDelayed(mTimerRunnable, 1000);
 
-        mBinding.liveVideoBarTakePicture.setEnabled(false);
-        mBinding.liveVideoBarRecord.setEnabled(false);
+        binding.liveVideoBarTakePicture.setEnabled(false);
+        binding.liveVideoBarRecord.setEnabled(false);
     }
 
     private void onPlayStop() {
-        mBinding.liveVideoBarEnableAudio.setEnabled(false);
+        binding.liveVideoBarEnableAudio.setEnabled(false);
         mHandler.removeCallbacks(mTimerRunnable);
     }
 
@@ -475,11 +483,11 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
      * state：1、连接中，2、连接错误，3、连接线程退出
      * */
     public void onEvent(PlayFragment playFragment, int state, int err, String msg) {
-        mBinding.msgTxt.append(String.format("[%s]\t%s\t\n", new SimpleDateFormat("HH:mm:ss").format(new Date()), msg));
+        binding.msgTxt.append(String.format("[%s]\t%s\t\n", new SimpleDateFormat("HH:mm:ss").format(new Date()), msg));
     }
 
     public void onRecordState(int status) {
-        ImageView mPlayAudio = mBinding.liveVideoBarRecord;
+        ImageView mPlayAudio = binding.liveVideoBarRecord;
         mPlayAudio.setImageState(status == 1 ? new int[]{android.R.attr.state_checked} : new int[]{}, true);
         mPlayAudio.removeCallbacks(mResetRecordStateRunnable);
     }
@@ -495,19 +503,16 @@ public class PlayActivity extends AppCompatActivity implements PlayFragment.OnDo
 
     @Override
     public void onSEIDataReceived(final byte[] sei) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // 在TextView中显示SEI数据
-                String seiData = bytesToHex(sei);
-                mBinding.msgTxt.append(String.format("[%s] 收到SEI[%d]: %s \n", new SimpleDateFormat("HH:mm:ss").format(new Date()), sei.length, seiData));
-                // 自动滚动到底部
-                final int scrollAmount = mBinding.msgTxt.getLayout().getLineTop(mBinding.msgTxt.getLineCount()) - mBinding.msgTxt.getHeight();
-                if (scrollAmount > 0) {
-                    mBinding.msgTxt.scrollTo(0, scrollAmount);
-                } else {
-                    mBinding.msgTxt.scrollTo(0, 0);
-                }
+        runOnUiThread(() -> {
+            // 在TextView中显示SEI数据
+            String seiData = bytesToHex(sei);
+            binding.msgTxt.append(String.format("[%s] 收到SEI[%d]: %s \n", new SimpleDateFormat("HH:mm:ss").format(new Date()), sei.length, seiData));
+            // 自动滚动到底部
+            final int scrollAmount = binding.msgTxt.getLayout().getLineTop(binding.msgTxt.getLineCount()) - binding.msgTxt.getHeight();
+            if (scrollAmount > 0) {
+                binding.msgTxt.scrollTo(0, scrollAmount);
+            } else {
+                binding.msgTxt.scrollTo(0, 0);
             }
         });
     }

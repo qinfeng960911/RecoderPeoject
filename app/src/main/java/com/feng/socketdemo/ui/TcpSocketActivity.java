@@ -22,6 +22,7 @@ import com.feng.socketdemo.config.DeviceCmd;
 import com.feng.socketdemo.data.VideoSource;
 import com.feng.socketdemo.service.SocketTcpClient;
 import com.feng.socketdemo.tools.TcpSocketClient;
+import com.feng.socketdemo.ui.main.AlbumActivity;
 import com.feng.socketdemo.ui.main.PlayActivity;
 import com.feng.socketdemo.utils.NumberUtil;
 
@@ -162,7 +163,8 @@ public class TcpSocketActivity extends AppCompatActivity {
 //            cv.put(VideoSource.TRANSPORT_MODE, VideoSource.TRANSPORT_MODE_TCP);//TCP
 //            cv.put(VideoSource.SEND_OPTION, VideoSource.SEND_OPTION_TRUE );//发送活性包
 
-            Intent i = new Intent(TcpSocketActivity.this, PlayActivity.class);
+//            Intent i = new Intent(TcpSocketActivity.this, PlayActivity.class);
+            Intent i = new Intent(TcpSocketActivity.this, AlbumActivity.class);
             i.putExtra("play_url", DeviceCmd.RTSP_LIVE);
             i.putExtra(VideoSource.TRANSPORT_MODE, VideoSource.TRANSPORT_MODE_TCP);
             i.putExtra(VideoSource.SEND_OPTION, VideoSource.SEND_OPTION_TRUE);

@@ -2,20 +2,25 @@ package com.feng.socketdemo.base;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.feng.socketdemo.R;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -217,6 +222,19 @@ public abstract class BaseBindingActivity<B extends ViewDataBinding, V extends B
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 隐藏标题栏
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
+        // 设置状态栏样式
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            );
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.white));
+        }
 
         // 初始化DataBinding
         initDataBinding();
