@@ -3,10 +3,10 @@ package com.feng.socketdemo.ui.main;
 import android.util.Log;
 
 import com.feng.socketdemo.R;
-import com.feng.socketdemo.base.BaseBindingActivity;
+import com.feng.socketdemo.base.BaseActivity;
 import com.feng.socketdemo.databinding.ActivityMainBinding;
 
-public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainViewModel> {
+public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
 
     @Override
     protected int getLayoutId() {
@@ -18,8 +18,10 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
         // 可以在这里获取View引用
         // 但通过DataBinding，通常不需要
 
+//        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
+
         binding.button.setOnClickListener(v -> {
-            viewModel.getTitle().setValue("点击次数: " );
+            viewModel.getTitle().setValue("点击次数: ");
         });
     }
 
@@ -39,11 +41,6 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
                 onLoadingStateChanged(isLoading);
             });
 
-            // 观察错误状态
-            viewModel.getErrorState().observe(this, error -> {
-                onErrorStateChanged(error);
-            });
-
             // 观察标题变化
             viewModel.getTitle().observe(this, title -> {
                 // 可以通过binding直接访问View
@@ -52,7 +49,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
         }
     }
 
-    @Override
+
     protected void onLoadingStateChanged(boolean isLoading) {
         if (isLoading) {
             // 显示加载

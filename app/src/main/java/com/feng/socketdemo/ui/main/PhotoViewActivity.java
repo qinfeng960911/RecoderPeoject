@@ -1,17 +1,15 @@
 package com.feng.socketdemo.ui.main;
 
-import android.util.Log;
-
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.feng.socketdemo.R;
-import com.feng.socketdemo.base.BaseBindingActivity;
+import com.feng.socketdemo.base.BaseActivity;
 import com.feng.socketdemo.databinding.ActivityPhotoViewerBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoViewActivity extends BaseBindingActivity<ActivityPhotoViewerBinding, PhotoViewModel> {
+public class PhotoViewActivity extends BaseActivity<ActivityPhotoViewerBinding, PhotoViewModel> {
 
     private final String TAG = "PhotoViewActivity";
     private ViewPager2 viewPager;

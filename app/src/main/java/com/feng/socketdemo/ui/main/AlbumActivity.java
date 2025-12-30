@@ -1,10 +1,9 @@
 package com.feng.socketdemo.ui.main;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.feng.socketdemo.R;
-import com.feng.socketdemo.base.BaseBindingActivity;
+import com.feng.socketdemo.base.BaseActivity;
 import com.feng.socketdemo.bean.DataItem;
 import com.feng.socketdemo.databinding.ActivityAlbumBinding;
 
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AlbumActivity extends BaseBindingActivity<ActivityAlbumBinding, AlbumModel> {
+public class AlbumActivity extends BaseActivity<ActivityAlbumBinding, AlbumModel> {
 
     private AlbumAdapter mainAdapter;
     private List<DataItem> dataList = new ArrayList<>();

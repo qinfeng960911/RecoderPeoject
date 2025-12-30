@@ -31,7 +31,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.feng.socketdemo.R;
-import com.feng.socketdemo.base.BaseBindingActivity;
+import com.feng.socketdemo.base.BaseActivity;
 import com.feng.socketdemo.data.VideoSource;
 import com.feng.socketdemo.databinding.ActivityPlayBinding;
 import com.feng.socketdemo.utils.FileUtil;
@@ -42,7 +42,7 @@ import java.util.Date;
 /**
  * 播放页
  */
-public class PlayActivity extends BaseBindingActivity<ActivityPlayBinding, PlayModel> implements PlayFragment.OnDoubleTapListener, PlayFragment.SEIDataListener {
+public class PlayActivity extends BaseActivity<ActivityPlayBinding, PlayModel> implements PlayFragment.OnDoubleTapListener, PlayFragment.SEIDataListener {
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0x111;
 
@@ -64,6 +64,7 @@ public class PlayActivity extends BaseBindingActivity<ActivityPlayBinding, PlayM
     private final Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
+            if (isDestroyed) return;
             long length = mRenderFragment.getReceivedStreamLength();
 
             if (length == 0) {
@@ -145,6 +146,8 @@ public class PlayActivity extends BaseBindingActivity<ActivityPlayBinding, PlayM
                     @Override
                     protected void onReceiveResult(int resultCode, Bundle resultData) {
                         super.onReceiveResult(resultCode, resultData);
+
+                        if (isDestroyed) return;
 
                         if (resultCode == PlayFragment.RESULT_REND_START) {
                             onPlayStart();
@@ -228,21 +231,12 @@ public class PlayActivity extends BaseBindingActivity<ActivityPlayBinding, PlayM
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            landscape();
+//            landscape();
         } else {
-            vertical();
+//            vertical();
         }
     }
 
-
-    @Override
-    public void onBackPressed() {
-        if (isLandscape()) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

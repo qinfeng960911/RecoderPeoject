@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * DataBinding Fragment基类
  */
-public abstract class BaseBindingFragment<B extends ViewDataBinding, V extends BaseViewModel>
+public abstract class BaseFragment<B extends ViewDataBinding, V extends BaseViewModel>
         extends Fragment implements LifecycleOwner {
 
     protected B binding;

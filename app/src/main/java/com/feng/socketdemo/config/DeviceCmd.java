@@ -8,6 +8,8 @@ public class DeviceCmd {
     public static final int GET_PARAMS = 319;
     //心跳
     public static final int HEART_BEAT = 1796;
+//    public static final int HEART_BEAT = 1794;
+//    public static final int HEART_BEAT = 1792;
     //rtsp流
     public static final String RTSP_LIVE = "rtsp://192.168.42.1/live";
 

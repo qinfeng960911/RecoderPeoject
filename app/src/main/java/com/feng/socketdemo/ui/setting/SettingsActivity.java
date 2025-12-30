@@ -1,17 +1,18 @@
 package com.feng.socketdemo.ui.setting;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.feng.socketdemo.R;
+import com.feng.socketdemo.base.BaseActivity;
+import com.feng.socketdemo.databinding.ActivitySettingsBinding;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity<ActivitySettingsBinding, SettingsModel> {
 
     // 循环录制相关按钮
     private Button btn1Min, btn3Min, btn5Min;
@@ -22,8 +23,9 @@ public class SettingsActivity extends AppCompatActivity {
     // 灵敏度相关按钮
     private Button btnOff, btnLow, btnMedium, btnHigh;
 
-    // 开关和格式化按钮
-    private Switch switchParkingGuard;
+    //开关和格式化按钮
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private SwitchCompat switchParkingGuard;
     private Button btnFormat;
     private TextView tvSdCardSpace;
 
@@ -37,12 +39,37 @@ public class SettingsActivity extends AppCompatActivity {
     private String sdCardSpace = "214.63M";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+    protected int getLayoutId() {
+        return R.layout.activity_settings;
+    }
 
-        // 初始化视图
-        initViews();
+
+    @Override
+    protected void initView() {
+
+        // 返回按钮
+        binding.ivBack.setOnClickListener(v -> finish());
+
+        // 循环录制按钮
+        btn1Min = binding.btn1min;
+        btn3Min = binding.btn3min;
+        btn5Min = binding.btn5min;
+
+        // 分辨率按钮
+        btn1440P = binding.btn1440p;
+        btn1080P = binding.btn1080p;
+        btn720P = binding.btn720p;
+
+        // 灵敏度按钮
+        btnOff = binding.btnOff;
+        btnLow = binding.btnLow;
+        btnMedium = binding.btnMedium;
+        btnHigh = binding.btnHigh;
+
+        // 开关和格式化按钮
+        switchParkingGuard = binding.switchParkingGuard;
+        btnFormat = binding.btnFormat;
+        tvSdCardSpace = binding.tvSdCardSpace;
 
         // 设置点击监听器
         setupClickListeners();
@@ -51,30 +78,14 @@ public class SettingsActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void initViews() {
-        // 返回按钮
-        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+    @Override
+    protected void initData() {
 
-        // 循环录制按钮
-        btn1Min = findViewById(R.id.btn_1min);
-        btn3Min = findViewById(R.id.btn_3min);
-        btn5Min = findViewById(R.id.btn_5min);
+    }
 
-        // 分辨率按钮
-        btn1440P = findViewById(R.id.btn_1440p);
-        btn1080P = findViewById(R.id.btn_1080p);
-        btn720P = findViewById(R.id.btn_720p);
+    @Override
+    protected void initObserver() {
 
-        // 灵敏度按钮
-        btnOff = findViewById(R.id.btn_off);
-        btnLow = findViewById(R.id.btn_low);
-        btnMedium = findViewById(R.id.btn_medium);
-        btnHigh = findViewById(R.id.btn_high);
-
-        // 开关和格式化按钮
-        switchParkingGuard = findViewById(R.id.switch_parking_guard);
-        btnFormat = findViewById(R.id.btn_format);
-        tvSdCardSpace = findViewById(R.id.tv_sd_card_space);
     }
 
     private void setupClickListeners() {

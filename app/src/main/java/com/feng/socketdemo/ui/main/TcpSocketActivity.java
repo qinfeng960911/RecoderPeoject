@@ -1,51 +1,33 @@
-package com.feng.socketdemo.ui;
+package com.feng.socketdemo.ui.main;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 
 import com.feng.socketdemo.R;
+import com.feng.socketdemo.base.BaseActivity;
 import com.feng.socketdemo.config.DeviceCmd;
 import com.feng.socketdemo.data.VideoSource;
+import com.feng.socketdemo.databinding.ActivityTcpSocketBinding;
 import com.feng.socketdemo.service.SocketTcpClient;
 import com.feng.socketdemo.tools.TcpSocketClient;
-import com.feng.socketdemo.ui.main.AlbumActivity;
-import com.feng.socketdemo.ui.main.PlayActivity;
 import com.feng.socketdemo.utils.NumberUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TcpSocketActivity extends AppCompatActivity {
+public class TcpSocketActivity extends BaseActivity<ActivityTcpSocketBinding, TcpSocketModel> {
 
     private static final String TAG = "TcpSocketActivity";
 
     private static final int REQUEST_PLAY = 1000;
 
     private TcpSocketClient tcpClient;
-    private TextView tvStatus;
-    private TextView tvMessages;
-    private EditText etIpAddress;
-    private EditText etPort;
-    private EditText etMessage;
-    private Button btnConnect;
-    private Button btnDisconnect;
-    private Button btnSend;
-    private Button btnSendHex;
 
     // 消息编号计数器，每发送一条消息递增
     private int messageCode = 0;
@@ -55,16 +37,28 @@ public class TcpSocketActivity extends AppCompatActivity {
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tcp_socket);
+    protected int getLayoutId() {
+        return R.layout.activity_tcp_socket;
+    }
+
+    @Override
+    protected void initView() {
 
         initViews();
         initTcpClient();
         updateUI();
-
-//        initSocketTcpClient();
     }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void initObserver() {
+
+    }
+
 
     private void initSocketTcpClient() {
 
@@ -137,39 +131,34 @@ public class TcpSocketActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvStatus = findViewById(R.id.tv_status);
-        tvMessages = findViewById(R.id.tv_messages);
-        etIpAddress = findViewById(R.id.et_ip_address);
-        etPort = findViewById(R.id.et_port);
-        etMessage = findViewById(R.id.et_message);
-        btnConnect = findViewById(R.id.btn_connect);
-        btnDisconnect = findViewById(R.id.btn_disconnect);
-        btnSend = findViewById(R.id.btn_send);
-        btnSendHex = findViewById(R.id.btn_send_hex);
 
         // 设置默认IP和端口
-        etIpAddress.setText("192.168.42.1");
-        etMessage.setText("");
-        etPort.setText("7878");
+        binding.etIpAddress.setText("192.168.42.1");
+        binding.etMessage.setText("257");
+        binding.etPort.setText("7878");
 
         // 设置按钮点击监听
-        btnConnect.setOnClickListener(v -> connect());
-        btnDisconnect.setOnClickListener(v -> disconnect());
-        btnSend.setOnClickListener(v -> sendMessage());
-        btnSendHex.setOnClickListener(v -> {
+        binding.btnConnect.setOnClickListener(v -> connect());
+        binding.btnDisconnect.setOnClickListener(v -> disconnect());
+        binding.btnSend.setOnClickListener(v -> sendMessage());
+        binding.btnSendHex.setOnClickListener(v -> {
             //跳转记录仪页面
 //            ContentValues cv = new ContentValues();
 //            cv.put(VideoSource.URL, DeviceCmd.RTSP_LIVE);
 //            cv.put(VideoSource.TRANSPORT_MODE, VideoSource.TRANSPORT_MODE_TCP);//TCP
 //            cv.put(VideoSource.SEND_OPTION, VideoSource.SEND_OPTION_TRUE );//发送活性包
 
-//            Intent i = new Intent(TcpSocketActivity.this, PlayActivity.class);
-            Intent i = new Intent(TcpSocketActivity.this, AlbumActivity.class);
+            Intent i = new Intent(TcpSocketActivity.this, PlayActivity.class);
             i.putExtra("play_url", DeviceCmd.RTSP_LIVE);
             i.putExtra(VideoSource.TRANSPORT_MODE, VideoSource.TRANSPORT_MODE_TCP);
             i.putExtra(VideoSource.SEND_OPTION, VideoSource.SEND_OPTION_TRUE);
 
-            ActivityCompat.startActivityForResult(this, i, REQUEST_PLAY,null);
+            ActivityCompat.startActivityForResult(this, i, REQUEST_PLAY, null);
+        });
+
+        binding.btnAlbum.setOnClickListener(v -> {
+            Intent intent = new Intent(TcpSocketActivity.this, AlbumActivity.class);
+            startActivity(intent);
         });
 
 
@@ -226,8 +215,8 @@ public class TcpSocketActivity extends AppCompatActivity {
     }
 
     private void connect() {
-        String ip = etIpAddress.getText().toString().trim();
-        String portStr = etPort.getText().toString().trim();
+        String ip = binding.etIpAddress.getText().toString().trim();
+        String portStr = binding.etPort.getText().toString().trim();
 
         if (ip.isEmpty()) {
             showToast("请输入IP地址");
@@ -263,20 +252,20 @@ public class TcpSocketActivity extends AppCompatActivity {
     private void sendMessage() {
         new Thread(() -> {
             if (tcpClient != null) {
-                String etCmd = etMessage.getText().toString();
+                String etCmd = binding.etMessage.getText().toString();
                 tcpClient.sendData(Integer.parseInt(etCmd));
             }
         }).start();
     }
 
     private void sendHexData() {
-        String hex = etMessage.getText().toString().trim();
+        String hex = binding.etMessage.getText().toString().trim();
         if (hex.isEmpty()) {
             return;
         }
 
         try {
-            String etCmd = etMessage.getText().toString();
+            String etCmd = binding.etMessage.getText().toString();
 //            client.sendDataToSocket();
             tcpClient.sendData(Integer.parseInt(etCmd));
             appendMessage("发送数据: " + hex);
@@ -309,26 +298,26 @@ public class TcpSocketActivity extends AppCompatActivity {
                 break;
         }
 
-        tvStatus.setText("状态: " + statusText);
-        tvStatus.setTextColor(color);
+        binding.tvStatus.setText("状态: " + statusText);
+        binding.tvStatus.setTextColor(color);
     }
 
     private void updateUI() {
         boolean isConnected = tcpClient.isConnected();
 
-        etIpAddress.setEnabled(!isConnected);
-        etPort.setEnabled(!isConnected);
-        btnConnect.setEnabled(!isConnected);
-        btnDisconnect.setEnabled(isConnected);
+        binding.etIpAddress.setEnabled(!isConnected);
+        binding.etPort.setEnabled(!isConnected);
+        binding.btnConnect.setEnabled(!isConnected);
+        binding.btnDisconnect.setEnabled(isConnected);
 //        btnSend.setEnabled(isConnected);
-        btnSendHex.setEnabled(isConnected);
+        binding.btnSendHex.setEnabled(isConnected);
 //        etMessage.setEnabled(isConnected);
     }
 
     private void appendMessage(String text) {
         runOnUiThread(() -> {
             String time = timeFormat.format(new Date());
-            String current = tvMessages.getText().toString();
+            String current = binding.tvMessages.getText().toString();
             String newText = "[" + time + "] " + text;
 
             if (current.length() > 5000) {
@@ -339,7 +328,7 @@ public class TcpSocketActivity extends AppCompatActivity {
                 }
             }
 
-            tvMessages.setText(current + "\n" + newText);
+            binding.tvMessages.setText(current + "\n" + newText);
 
             // 滚动到底部
             final ScrollView scrollView = findViewById(R.id.scroll_view);
